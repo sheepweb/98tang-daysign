@@ -33,25 +33,13 @@ def main():
     
     logger.info(f"找到 {len(account_envs)} 个账号配置")
     
-    # 查找daysign.py的路径
+    # 使用相对路径查找daysign.py (与multi_daysign.py在同一目录)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     daysign_path = os.path.join(script_dir, "daysign.py")
     
     if not os.path.exists(daysign_path):
-        # 如果当前目录没有，查找其他可能的位置
-        possible_paths = [
-            os.path.join(os.path.dirname(script_dir), "daysign.py"),
-            "/ql/scripts/daysign.py",
-            "/ql/data/scripts/daysign.py",
-        ]
-        
-        for path in possible_paths:
-            if os.path.exists(path):
-                daysign_path = path
-                break
-        else:
-            logger.error("无法找到daysign.py文件，请确保其在正确的路径中")
-            return
+        logger.error(f"无法找到daysign.py文件，请确保它与multi_daysign.py在同一目录")
+        return
     
     logger.info(f"使用的daysign.py路径: {daysign_path}")
     
