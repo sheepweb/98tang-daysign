@@ -6,7 +6,7 @@ import sys
 import logging
 
 # 配置多账号环境变量前缀
-ACCOUNT_PREFIX = "ACCOUNT_"
+ACCOUNT_PREFIX = "98ACCOUNT_"
 # 间隔时间范围(秒)
 MIN_INTERVAL = 600
 MAX_INTERVAL = 1200
@@ -28,7 +28,7 @@ def main():
             account_envs[account_num] = value
     
     if not account_envs:
-        logger.warning("未找到多账号配置，格式应为 ACCOUNT_1, ACCOUNT_2, ...")
+        logger.warning("未找到多账号配置，格式应为 98ACCOUNT_1, 98ACCOUNT_2, ...")
         return
     
     logger.info(f"找到 {len(account_envs)} 个账号配置")
