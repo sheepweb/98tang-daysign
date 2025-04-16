@@ -10,6 +10,8 @@ ACCOUNT_PREFIX = "98ACCOUNT_"
 # 间隔时间范围(秒)
 MIN_INTERVAL = 600
 MAX_INTERVAL = 1200
+# 自定义回复的环境变量名
+AUTO_REPLIES_ENV = "AUTO_REPLIES"
 
 # 配置日志
 logging.basicConfig(
@@ -18,6 +20,22 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 logger = logging.getLogger()
+
+def get_custom_replies():
+    """从环境变量获取自定义回复内容"""
+    replies_text = os.getenv(AUTO_REPLIES_ENV, '')
+    if not replies_text:
+        logger.info("未设置自定义回复，将使用默认回复")
+        return None
+    
+    # 按行分割，过滤空行
+    replies = [line.strip() for line in replies_text.split('\n') if line.strip()]
+    if not replies:
+        logger.info("自定义回复为空，将使用默认回复")
+        return None
+    
+    logger.info(f"已加载 {len(replies)} 条自定义回复")
+    return replies
 
 def main():
     # 从系统环境变量获取
@@ -32,6 +50,9 @@ def main():
         return
     
     logger.info(f"找到 {len(account_envs)} 个账号配置")
+    
+    # 获取自定义回复
+    custom_replies = get_custom_replies()
     
     # 使用相对路径查找daysign.py (与multi_daysign.py在同一目录)
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -50,6 +71,12 @@ def main():
         # 设置临时环境变量
         env = os.environ.copy()
         env["FETCH_98TANG"] = account_value
+        
+        # 如果有自定义回复，随机选择一条
+        if custom_replies:
+            random_reply = random.choice(custom_replies)
+            env["CUSTOM_REPLY"] = random_reply
+            logger.info(f"已为此次执行选择回复: {random_reply}")
         
         # 调用daysign.py
         try:

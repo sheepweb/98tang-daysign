@@ -16,6 +16,10 @@ FID = 103  # 高清中文字幕
 
 REPLY_TIMES = os.getenv('REPLY_TIMES_98TANG', 1)
 
+# 检查是否有自定义回复
+CUSTOM_REPLY = os.getenv('CUSTOM_REPLY', '')
+
+# 默认回复列表
 AUTO_REPLIES = (
     '感谢楼主分享好片',
     '感谢分享！！',
@@ -124,7 +128,12 @@ def daysign(
                 soup = BeautifulSoup(r.text, 'html.parser')
                 formhash = soup.find('input', {'name': 'formhash'})['value']
 
-            message = random.choice(AUTO_REPLIES)
+            # 如果有自定义回复，使用自定义回复，否则从默认列表中随机选择
+            if CUSTOM_REPLY:
+                message = CUSTOM_REPLY
+                print(f'使用自定义回复: {message}')
+            else:
+                message = random.choice(AUTO_REPLIES)
 
             with _request(method='post', url=f'https://{SEHUATANG_HOST}/forum.php?mod=post&action=reply&fid={FID}&tid={tid}&extra=page%3D1&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1',
                           data={
